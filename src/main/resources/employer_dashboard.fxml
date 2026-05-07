@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane xmlns="http://javafx.com/fxml" xmlns:fx="http://javafx.com/fxml/1"
+         fx:controller="dbms_project.controller.EmployerDashboardController"
+         prefWidth="900" prefHeight="450">
+
+    <Tab text="Publish New Post" closable="false">
+        <VBox spacing="10" style="-fx-padding: 20;">
+            <TextField fx:id="jobTitleField" promptText="Job Title"/>
+            <TextArea fx:id="jobDescArea" promptText="Job Definition" prefHeight="200"/>
+            <TextField fx:id="salaryField" promptText="Salary Range"/>
+            <Button text="Publish the Post" onAction="#handlePostJob" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+
+            <HBox alignment="TOP_RIGHT" style="-fx-padding: 10;">
+                <Button text="Exit" onAction="#handleLogout" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+    </Tab>
+
+    <Tab text="My Posts" closable="false">
+        <TableView fx:id="myJobsTable">
+            <columns>
+                <TableColumn text="Title" fx:id="colMyTitle"/>
+                <TableColumn text="State" fx:id="colMyStatus"/>
+                <TableColumn text="Date" fx:id="colMyDate"/>
+            </columns>
+        </TableView>
+    </Tab>
+
+    <Tab text="Tüm İlanlar" closable="false">
+        <TableView fx:id="allJobsTable">
+            <columns>
+                <TableColumn text="Şirket" fx:id="colAllCompany"/>
+                <TableColumn text="Başlık" fx:id="colAllTitle"/>
+                <TableColumn text="Maaş" fx:id="colAllSalary"/>
+            </columns>
+        </TableView>
+    </Tab>
+
+    <Tab text="Gelen Başvurular" closable="false">
+        <TableView fx:id="applicationTable">
+            <columns>
+                <TableColumn text="Aday" fx:id="colSeekerName"/>
+                <TableColumn text="İlan" fx:id="colJobTitle"/>
+                <TableColumn text="Durum" fx:id="colStatus"/>
+            </columns>
+        </TableView>
+    </Tab>
+</TabPane>

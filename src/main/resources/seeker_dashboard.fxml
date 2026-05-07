@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane prefHeight="400" prefWidth="800" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dbms_project.controller.SeekerDashboardController">
+
+    <Tab text="Profil &amp; CV" closable="false">
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="15" style="-fx-padding: 20;">
+                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Personal Information" />
+                <TextField fx:id="fnameField" promptText="Name" />
+                <TextField fx:id="lnameField" promptText="Surname" />
+                <Button onAction="#handleUploadCV" text="Load the CV File (PDF)" />
+                <Label fx:id="cvPathLabel" text="No file was selected." />
+                <Button onAction="#handleUpdateProfile" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Update Profile" />
+                <HBox alignment="TOP_RIGHT" style="-fx-padding: 10;">
+                    <Button text="Exit" onAction="#handleLogout" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </Tab>
+
+    <Tab text="Education &amp; Experience" closable="false">
+        <SplitPane dividerPositions="0.5">
+            <VBox spacing="10" style="-fx-padding: 10;">
+                <Label style="-fx-font-weight: bold;" text="Education" />
+                <TableView fx:id="educationTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colInstitution" text="Institution" />
+                        <TableColumn fx:id="colDegree" text="Department/Degree" />
+                    </columns>
+                </TableView>
+                <HBox spacing="10">
+                    <TextField fx:id="instField" promptText="Institution Name" HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="degreeField" promptText="Department/Degree" HBox.hgrow="ALWAYS"/>
+                    <Button text="Add" onAction="#handleAddEducation" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                </HBox>
+            </VBox>
+            <VBox spacing="10" style="-fx-padding: 10;">
+                <Label style="-fx-font-weight: bold;" text="Experience" />
+                <TableView fx:id="experienceTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colExpCompany" text="Company" />
+                        <TableColumn fx:id="colRole" text="Role" />
+                    </columns>
+                </TableView>
+                <HBox spacing="10">
+                    <TextField fx:id="expCompField" promptText="Company Name" HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="expRoleField" promptText="Role" HBox.hgrow="ALWAYS"/>
+                    <Button text="Add" onAction="#handleAddExperience" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                </HBox>
+            </VBox>
+        </SplitPane>
+    </Tab>
+
+    <Tab text="Job Posts &amp; Saved Posts" closable="false">
+        <VBox prefHeight="488.0" prefWidth="794.0" spacing="10" style="-fx-padding: 10;">
+            <TableView fx:id="jobPostingTable">
+                <columns>
+                    <TableColumn fx:id="colCompany" text="Company" />
+                    <TableColumn fx:id="colTitle" text="Post" />
+                </columns>
+            </TableView>
+            <Button onAction="#handleSaveJob" text="Save Selected Post" style="-fx-background-color: #FFC107; -fx-text-fill: black;" />
+            <Button onAction="#handleApplyJob" text="Apply to Selected Post" style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
+        </VBox>
+    </Tab>
+</TabPane>
