@@ -2,17 +2,18 @@ package dbms_project.model;
 
 public class JobPosting{
     private int jobId;
-    private String companyName;
+    private final String companyName;
     private String title;
+    private String description;
     private String salaryRange;
     private String postedDate;
     private String status;
 
-
-    public JobPosting(int jobId, String companyName, String title, String salaryRange, String postedDate, String status) {
+    public JobPosting(int jobId, String companyName, String title, String description, String salaryRange, String postedDate, String status) {
         this.jobId = jobId;
         this.companyName = companyName;
         this.title = title;
+        this.description = description;
         this.salaryRange = salaryRange;
         this.postedDate = postedDate;
         this.status = status;
@@ -59,5 +60,12 @@ public class JobPosting{
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

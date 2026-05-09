@@ -50,6 +50,7 @@ public class SeekerDashboardController {
     @FXML private TableView<JobPosting> jobPostingTable;
     @FXML private TableColumn<JobPosting, String> colCompany;
     @FXML private TableColumn<JobPosting, String> colTitle;
+    @FXML private TableColumn<JobPosting, String> colDescription;
 
     // yetenek sekmesi
     @FXML private TableView<SeekerSkill> skillTable;
@@ -76,6 +77,7 @@ public class SeekerDashboardController {
 
         colCompany.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+        colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         colSkillName.setCellValueFactory(new PropertyValueFactory<>("skillName"));
         colProficiency.setCellValueFactory(new PropertyValueFactory<>("proficiencyLevel"));
@@ -160,22 +162,23 @@ public class SeekerDashboardController {
     // Active job posts
     private void loadJobPostings() {
         ObservableList<JobPosting> list = FXCollections.observableArrayList();
-        String sql = "SELECT j.JobID, c.Name as CompanyName, j.Title " +
+        String sql = "SELECT j.JobID, c.Name as CompanyName, j.Title, j.Description " +
                 "FROM JobPosting j JOIN Company c ON j.CompanyID = c.CompanyID " +
                 "WHERE j.IsActive = 1";
 
         try (Connection conn = JDBCConnectivity.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    list.add(new JobPosting(
-                        rs.getInt("JobID"), rs.getString("CompanyName"), rs.getString("Title"), "", "", "Aktif"
-                    ));
-                }
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
+            while (rs.next()) {
+                list.add(new JobPosting(
+                        rs.getInt("JobID"),
+                        rs.getString("CompanyName"),
+                        rs.getString("Title"),
+                        rs.getString("Description"),
+                        "", "", "Active"
+                ));
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
 
         jobPostingTable.setItems(list);
     }

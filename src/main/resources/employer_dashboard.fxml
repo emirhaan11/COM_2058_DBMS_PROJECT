@@ -25,9 +25,10 @@
 
             <TableView fx:id="myJobsTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn text="Başlık" fx:id="colMyTitle"/>
-                    <TableColumn text="Durum" fx:id="colMyStatus"/>
-                    <TableColumn text="Tarih" fx:id="colMyDate"/>
+                    <TableColumn text="Başlık" fx:id="colMyTitle" prefWidth="150"/>
+                    <TableColumn text="Açıklama" fx:id="colMyDesc" prefWidth="300"/>
+                    <TableColumn text="Durum" fx:id="colMyStatus" prefWidth="100"/>
+                    <TableColumn text="Tarih" fx:id="colMyDate" prefWidth="150"/>
                 </columns>
             </TableView>
 
@@ -52,9 +53,10 @@
 
             <TableView fx:id="allJobsTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn text="Şirket" fx:id="colAllCompany"/>
-                    <TableColumn text="Başlık" fx:id="colAllTitle"/>
-                    <TableColumn text="Maaş" fx:id="colAllSalary"/>
+                    <TableColumn text="Şirket" fx:id="colAllCompany" prefWidth="150"/>
+                    <TableColumn text="Başlık" fx:id="colAllTitle" prefWidth="150"/>
+                    <TableColumn text="Açıklama" fx:id="colAllDesc" prefWidth="300"/>
+                    <TableColumn text="Maaş" fx:id="colAllSalary" prefWidth="100"/>
                 </columns>
             </TableView>
 

@@ -33,6 +33,8 @@ public class EmployerDashboardController {
     @FXML private TableColumn<JobPosting, String> colAllCompany;
     @FXML private TableColumn<JobPosting, String> colAllTitle;
     @FXML private TableColumn<JobPosting, String> colAllSalary;
+    @FXML private TableColumn<JobPosting, String> colMyDesc;
+    @FXML private TableColumn<JobPosting, String> colAllDesc;
 
     // İş ilanına olan başvurular
     @FXML private TableView<Application> applicationTable;
@@ -52,10 +54,12 @@ public class EmployerDashboardController {
         colMyTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colMyStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colMyDate.setCellValueFactory(new PropertyValueFactory<>("postedDate"));
+        colMyDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         colAllCompany.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         colAllTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colAllSalary.setCellValueFactory(new PropertyValueFactory<>("salaryRange"));
+        colAllDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         colSeekerName.setCellValueFactory(new PropertyValueFactory<>("seekerName"));
         colJobTitle.setCellValueFactory(new PropertyValueFactory<>("jobTitle"));
@@ -75,17 +79,24 @@ public class EmployerDashboardController {
         ObservableList<JobPosting> list = FXCollections.observableArrayList();
         int companyId = getCompanyIdFromEmployer(userId);
 
-        String sql = "SELECT JobID, Title, IsActive, PostedDate FROM JobPosting WHERE CompanyID = ?";
+        String sql = "SELECT JobID, Title, Description, IsActive, PostedDate FROM JobPosting WHERE CompanyID = ?";
         try (Connection conn = JDBCConnectivity.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setInt(1, companyId);
                 ResultSet rs = pstmt.executeQuery();
 
-                while (rs.next()) {
-                    String status = rs.getBoolean("IsActive") ? "Active" : "Passive";
-                 list.add(new JobPosting(rs.getInt("JobID"), "", rs.getString("Title"), "", rs.getString("PostedDate"), status
+            while (rs.next()) {
+                String status = rs.getBoolean("IsActive") ? "Active" : "Passive";
+                list.add(new JobPosting(
+                        rs.getInt("JobID"),
+                        "",
+                        rs.getString("Title"),
+                        rs.getString("Description"),
+                        "",
+                        rs.getString("PostedDate"),
+                        status
                 ));
-                }
+            }
         } catch (SQLException e)
         {
             e.printStackTrace();
@@ -97,7 +108,7 @@ public class EmployerDashboardController {
     // Database den aktif olan bütün ilanları gösterir
     private void loadAllJobs() {
         ObservableList<JobPosting> list = FXCollections.observableArrayList();
-        String sql = "SELECT j.JobID, c.Name as CompanyName, j.Title, j.SalaryRange " +
+        String sql = "SELECT j.JobID, c.Name as CompanyName, j.Title, j.Description, j.SalaryRange " +
                 "FROM JobPosting j JOIN Company c ON j.CompanyID = c.CompanyID " +
                 "WHERE j.IsActive = 1";
 
@@ -107,7 +118,13 @@ public class EmployerDashboardController {
 
             while (rs.next()) {
                 list.add(new JobPosting(
-                        rs.getInt("JobID"), rs.getString("CompanyName"), rs.getString("Title"), rs.getString("SalaryRange"), "", "Aktif"
+                        rs.getInt("JobID"),
+                        rs.getString("CompanyName"),
+                        rs.getString("Title"),
+                        rs.getString("Description"),
+                        rs.getString("SalaryRange"),
+                        "",
+                        "Active"
                 ));
             }
         } catch (SQLException e) { e.printStackTrace(); }

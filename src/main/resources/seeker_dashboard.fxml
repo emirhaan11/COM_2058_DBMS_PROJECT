@@ -73,8 +73,9 @@
         <VBox prefHeight="488.0" prefWidth="794.0" spacing="10" style="-fx-padding: 10;">
             <TableView fx:id="jobPostingTable">
                 <columns>
-                    <TableColumn fx:id="colCompany" text="Company" />
-                    <TableColumn fx:id="colTitle" text="Post" />
+                    <TableColumn fx:id="colCompany" text="Company" prefWidth="150" />
+                    <TableColumn fx:id="colTitle" text="Post" prefWidth="150" />
+                    <TableColumn fx:id="colDescription" text="Description" prefWidth="350" />
                 </columns>
             </TableView>
             <Button onAction="#handleSaveJob" text="Save Selected Post" style="-fx-background-color: #FFC107; -fx-text-fill: black;" />
