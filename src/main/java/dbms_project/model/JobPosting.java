@@ -2,7 +2,7 @@ package dbms_project.model;
 
 public class JobPosting{
     private int jobId;
-    private String CompanyName;
+    private String companyName;
     private String title;
     private String salaryRange;
     private String postedDate;
@@ -11,7 +11,7 @@ public class JobPosting{
 
     public JobPosting(int jobId, String companyName, String title, String salaryRange, String postedDate, String status) {
         this.jobId = jobId;
-        this.CompanyName = companyName;
+        this.companyName = companyName;
         this.title = title;
         this.salaryRange = salaryRange;
         this.postedDate = postedDate;
@@ -27,10 +27,10 @@ public class JobPosting{
     }
 
     public String getCompanyName() {
-        return CompanyName;
+        return companyName;
     }
     public void setCompanyName(String companyName) {
-        CompanyName = companyName;
+        companyName = companyName;
     }
 
     public String getTitle() {

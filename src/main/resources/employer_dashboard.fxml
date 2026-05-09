@@ -4,7 +4,8 @@
 
 <TabPane xmlns="http://javafx.com/fxml" xmlns:fx="http://javafx.com/fxml/1"
          fx:controller="dbms_project.controller.EmployerDashboardController"
-         prefWidth="900" prefHeight="450">
+         prefWidth="900" prefHeight="450"
+        >
 
     <Tab text="Publish New Post" closable="false">
         <VBox spacing="10" style="-fx-padding: 20;">
@@ -19,33 +20,65 @@
         </VBox>
     </Tab>
 
-    <Tab text="My Posts" closable="false">
-        <TableView fx:id="myJobsTable">
-            <columns>
-                <TableColumn text="Title" fx:id="colMyTitle"/>
-                <TableColumn text="State" fx:id="colMyStatus"/>
-                <TableColumn text="Date" fx:id="colMyDate"/>
-            </columns>
-        </TableView>
+    <Tab text="İlanlarım" closable="false">
+        <VBox spacing="10" style="-fx-padding: 10;">
+
+            <TableView fx:id="myJobsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Başlık" fx:id="colMyTitle"/>
+                    <TableColumn text="Durum" fx:id="colMyStatus"/>
+                    <TableColumn text="Tarih" fx:id="colMyDate"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10">
+                <Button text="Seçili İlanı Sil" onAction="#handleDeleteJob" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                <Button text="Yetenekleri Gör" onAction="#handleViewJobSkills" style="-fx-background-color: #607D8B; -fx-text-fill: white;"/>
+            </HBox>
+
+            <TitledPane text="Seçili İlana Aranan Yetenek Ekle" collapsible="false">
+                <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+                    <TextField fx:id="empSkillNameField" promptText="Yetenek Adı (Örn: Java)" prefWidth="200"/>
+                    <CheckBox fx:id="mandatoryCheck" text="Zorunlu Yetenek"/>
+                    <Button text="İlana Ekle" onAction="#handleAddJobSkill" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                </HBox>
+            </TitledPane>
+
+        </VBox>
     </Tab>
 
     <Tab text="Tüm İlanlar" closable="false">
-        <TableView fx:id="allJobsTable">
-            <columns>
-                <TableColumn text="Şirket" fx:id="colAllCompany"/>
-                <TableColumn text="Başlık" fx:id="colAllTitle"/>
-                <TableColumn text="Maaş" fx:id="colAllSalary"/>
-            </columns>
-        </TableView>
+        <VBox spacing="10" style="-fx-padding: 10;">
+
+            <TableView fx:id="allJobsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Şirket" fx:id="colAllCompany"/>
+                    <TableColumn text="Başlık" fx:id="colAllTitle"/>
+                    <TableColumn text="Maaş" fx:id="colAllSalary"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10">
+                <Button onAction="#handleViewJobSkills" text="View Job Details/Skills" style="-fx-background-color: #607D8B; -fx-text-fill: white;" />
+            </HBox>
+
+        </VBox>
     </Tab>
 
     <Tab text="Gelen Başvurular" closable="false">
-        <TableView fx:id="applicationTable">
-            <columns>
-                <TableColumn text="Aday" fx:id="colSeekerName"/>
-                <TableColumn text="İlan" fx:id="colJobTitle"/>
-                <TableColumn text="Durum" fx:id="colStatus"/>
-            </columns>
-        </TableView>
+        <VBox spacing="10" style="-fx-padding: 10;">
+            <TableView fx:id="applicationTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Aday" fx:id="colSeekerName"/>
+                    <TableColumn text="İlan" fx:id="colJobTitle"/>
+                    <TableColumn text="Durum" fx:id="colStatus"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
+                <Button text="Reddet (Rejected)" onAction="#handleRejectApplication" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button text="Kabul Et (Accepted)" onAction="#handleAcceptApplication" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            </HBox>
+        </VBox>
     </Tab>
 </TabPane>

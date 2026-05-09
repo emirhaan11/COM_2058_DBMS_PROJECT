@@ -24,32 +24,47 @@
     <Tab text="Education &amp; Experience" closable="false">
         <SplitPane dividerPositions="0.5">
             <VBox spacing="10" style="-fx-padding: 10;">
-                <Label style="-fx-font-weight: bold;" text="Education" />
+                <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Education" />
                 <TableView fx:id="educationTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="colInstitution" text="Institution" />
-                        <TableColumn fx:id="colDegree" text="Department/Degree" />
+                        <TableColumn fx:id="colDepartment" text="Department" />
+                        <TableColumn fx:id="colDegree" text="Degree" />
+                        <TableColumn fx:id="colGradYear" text="Grad Year" />
                     </columns>
                 </TableView>
-                <HBox spacing="10">
-                    <TextField fx:id="instField" promptText="Institution Name" HBox.hgrow="ALWAYS"/>
-                    <TextField fx:id="degreeField" promptText="Department/Degree" HBox.hgrow="ALWAYS"/>
+                <HBox spacing="5">
+                    <TextField fx:id="instField" promptText="Institution" HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="deptField" promptText="Department" HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="degreeField" promptText="Degree" prefWidth="80"/>
+                    <TextField fx:id="gradYearField" promptText="Year" prefWidth="60"/>
                     <Button text="Add" onAction="#handleAddEducation" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
                 </HBox>
+                <Button text="Delete Selected Education" onAction="#handleDeleteEducation" style="-fx-background-color: #f44336; -fx-text-fill: white; maxWidth: Infinity;"/>
             </VBox>
+
             <VBox spacing="10" style="-fx-padding: 10;">
-                <Label style="-fx-font-weight: bold;" text="Experience" />
+                <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Experience" />
                 <TableView fx:id="experienceTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="colExpCompany" text="Company" />
                         <TableColumn fx:id="colRole" text="Role" />
+                        <TableColumn fx:id="colStartDate" text="Start Date" />
+                        <TableColumn fx:id="colEndDate" text="End Date" />
                     </columns>
                 </TableView>
-                <HBox spacing="10">
-                    <TextField fx:id="expCompField" promptText="Company Name" HBox.hgrow="ALWAYS"/>
-                    <TextField fx:id="expRoleField" promptText="Role" HBox.hgrow="ALWAYS"/>
-                    <Button text="Add" onAction="#handleAddExperience" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-                </HBox>
+                <VBox spacing="5">
+                    <HBox spacing="5">
+                        <TextField fx:id="expCompField" promptText="Company Name" HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="expRoleField" promptText="Role" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <HBox spacing="5" alignment="CENTER_LEFT">
+                        <DatePicker fx:id="startDatePicker" promptText="Start Date" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <DatePicker fx:id="endDatePicker" promptText="End Date" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button text="Add" onAction="#handleAddExperience" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                    </HBox>
+                </VBox>
+                <Button text="Delete Selected Experience" onAction="#handleDeleteExperience" style="-fx-background-color: #f44336; -fx-text-fill: white; maxWidth: Infinity;"/>
             </VBox>
         </SplitPane>
     </Tab>
@@ -64,6 +79,26 @@
             </TableView>
             <Button onAction="#handleSaveJob" text="Save Selected Post" style="-fx-background-color: #FFC107; -fx-text-fill: black;" />
             <Button onAction="#handleApplyJob" text="Apply to Selected Post" style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
+            <Button onAction="#handleViewJobSkills" text="View Job Details/Skills" style="-fx-background-color: #607D8B; -fx-text-fill: white;" />
+        </VBox>
+    </Tab>
+
+    <Tab text="Skills" closable="false">
+        <VBox spacing="10" style="-fx-padding: 20;">
+            <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="My Skills" />
+
+            <TableView fx:id="skillTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colSkillName" text="Skill Name" prefWidth="250" />
+                    <TableColumn fx:id="colProficiency" text="Proficiency" prefWidth="150" />
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 0;">
+                <TextField fx:id="skillNameField" promptText="Skill (Örn: Java, React)" prefWidth="200"/>
+                <ComboBox fx:id="proficiencyCombo" promptText="Select Level" prefWidth="150"/>
+                <Button text="Add Skill" onAction="#handleAddSkill" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+            </HBox>
         </VBox>
     </Tab>
 </TabPane>

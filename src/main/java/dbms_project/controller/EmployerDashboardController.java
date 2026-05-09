@@ -40,6 +40,10 @@ public class EmployerDashboardController {
     @FXML private TableColumn<Application, String> colJobTitle;
     @FXML private TableColumn<Application, String> colStatus;
 
+    // yetenekler
+    @FXML private TextField empSkillNameField;
+    @FXML private CheckBox mandatoryCheck;
+
     private final int userId = UserSession.getUserId();
 
     @FXML
@@ -116,7 +120,7 @@ public class EmployerDashboardController {
         ObservableList<Application> list = FXCollections.observableArrayList();
         int companyId = getCompanyIdFromEmployer(userId);
 
-        String sql = "SELECT a.Application_ID, CONCAT(s.FirstName, ' ', s.LastName) as SeekerName, j.Title, a.Status " +
+        String sql = "SELECT a.Application_ID, CONCAT(s.FirstName, ' ', s.LastName) as SeekerName, j.Title, a.Status, j.JobID " +
                 "FROM Application a " +
                 "JOIN JobSeeker s ON a.Seeker_ID = s.User_ID " +
                 "JOIN JobPosting j ON a.JobID = j.JobID " +
@@ -129,9 +133,13 @@ public class EmployerDashboardController {
 
                 while (rs.next()) {
                     list.add(new Application(
-                        rs.getInt("Application_ID"), rs.getString("SeekerName"), rs.getString("Title"), rs.getString("Status")
+                            rs.getInt("Application_ID"),
+                            rs.getString("SeekerName"),
+                            rs.getString("Title"),
+                            rs.getString("Status"),
+                            rs.getInt("JobID")
                     ));
-                }
+                    }
         } catch (SQLException e)
         {
             e.printStackTrace();
@@ -189,6 +197,174 @@ public class EmployerDashboardController {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    @FXML
+    public void handleAddJobSkill(ActionEvent actionEvent) {
+        JobPosting selectedJob = myJobsTable.getSelectionModel().getSelectedItem();
+        if (selectedJob == null) {
+            showAlert("Warning", "Please select a job posting from the list above to add a skill..");
+            return;
+        }
+
+        String skillName = empSkillNameField.getText().trim();
+        if (skillName.isEmpty()) {
+            showAlert("Warning", "Please enter skill.");
+            return;
+        }
+
+        boolean isMandatory = mandatoryCheck.isSelected();
+        Connection conn = null;
+
+        try {
+            conn = JDBCConnectivity.getConnection();
+            conn.setAutoCommit(false); // Transaction başlat
+
+            // yetenek havuzunu kontrol et
+            String checkSkillSql = "SELECT SkillID FROM Skill WHERE SkillName = ?";
+            PreparedStatement checkStmt = conn.prepareStatement(checkSkillSql);
+            checkStmt.setString(1, skillName);
+            ResultSet rs = checkStmt.executeQuery();
+
+            int skillId = -1;
+            if (rs.next()) {
+                skillId = rs.getInt("SkillID");
+            } else {
+                String insertSkillSql = "INSERT INTO Skill (SkillName) VALUES (?)";
+                PreparedStatement insertSkillStmt = conn.prepareStatement(insertSkillSql, Statement.RETURN_GENERATED_KEYS);
+                insertSkillStmt.setString(1, skillName);
+                insertSkillStmt.executeUpdate();
+
+                ResultSet generatedKeys = insertSkillStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    skillId = generatedKeys.getInt(1);
+                }
+            }
+
+            // tabloyu doldurma
+            String insertJobSkillSql = "INSERT INTO JobSkill (JobID, SkillID, IsMandatory) VALUES (?, ?, ?)";
+            PreparedStatement insertJsStmt = conn.prepareStatement(insertJobSkillSql);
+            insertJsStmt.setInt(1, selectedJob.getJobId());
+            insertJsStmt.setInt(2, skillId);
+            insertJsStmt.setBoolean(3, isMandatory);
+            insertJsStmt.executeUpdate();
+
+            conn.commit();
+            showAlert("Successful", skillName + " skill was added successfully!");
+
+            empSkillNameField.clear();
+            mandatoryCheck.setSelected(false);
+
+        } catch (SQLException e) {
+            if (conn != null) try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            showAlert("Error", "This skill may have already been added to your profile or there is an error.");
+            e.printStackTrace();
+        }
+    }
+
+
+    //  accept application
+    @FXML
+    public void handleAcceptApplication(ActionEvent actionEvent) {
+        updateApplicationStatus("Accepted");
+    }
+
+    // refuse application
+    @FXML
+    public void handleRejectApplication(ActionEvent actionEvent) {
+        updateApplicationStatus("Rejected");
+    }
+
+    // change the state of application
+    private void updateApplicationStatus(String newStatus) {
+        Application selectedApp = applicationTable.getSelectionModel().getSelectedItem();
+        if (selectedApp == null) return;
+
+        Connection conn = null;
+        try {
+            conn = JDBCConnectivity.getConnection();
+            conn.setAutoCommit(false); // Transaction başlat
+
+            // update application status
+            String updateAppSql = "UPDATE Application SET Status = ? WHERE Application_ID = ?";
+            PreparedStatement pstmtApp = conn.prepareStatement(updateAppSql);
+            pstmtApp.setString(1, newStatus);
+            pstmtApp.setInt(2, selectedApp.getApplicationId());
+            pstmtApp.executeUpdate();
+
+            if (newStatus.equals("Accepted")) {
+                String deactivateJobSql = "UPDATE JobPosting SET IsActive = 0 WHERE JobID = ?";
+                PreparedStatement pstmtJob = conn.prepareStatement(deactivateJobSql);
+                pstmtJob.setInt(1, selectedApp.getJobId());
+                pstmtJob.executeUpdate();
+                showAlert("Information", "The candidate was accepted and the relevant job posting was closed.");
+            }
+
+            conn.commit();
+            loadApplications();
+            loadMyJobs();
+        } catch (SQLException e) {
+            if (conn != null) try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void handleDeleteJob() {
+        JobPosting selected = myJobsTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        String sql = "DELETE FROM JobPosting WHERE JobID = ?";
+        try (Connection conn = JDBCConnectivity.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, selected.getJobId());
+            pstmt.executeUpdate();
+            showAlert("Successful", "The post was completely removed from the system.");
+            loadMyJobs();
+        } catch (SQLException e) {
+            showAlert("Error", "This post cannot be deleted because there are applications for it. You must clean the applications first.");
+        }
+    }
+
+    @FXML
+    public void handleViewJobSkills() {
+        JobPosting selected = myJobsTable.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            selected = allJobsTable.getSelectionModel().getSelectedItem();
+        }
+
+        if (selected == null) {
+            showAlert("Warning", "Please select a post from the tables.");
+            return;
+        }
+
+        StringBuilder skillsInfo = new StringBuilder("Skills Wanted:\n\n");
+        String sql = "SELECT s.SkillName, js.IsMandatory FROM JobSkill js " +
+                "JOIN Skill s ON js.SkillID = s.SkillID WHERE js.JobID = ?";
+
+        try (Connection conn = JDBCConnectivity.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, selected.getJobId());
+                ResultSet rs = pstmt.executeQuery();
+
+                boolean hasSkills = false;
+                 while (rs.next()) {
+                    hasSkills = true;
+                    String name = rs.getString("SkillName");
+                    String mandatory = rs.getBoolean("IsMandatory") ? "[MANDATORY]" : "[NOT MANDATORY]";
+                    skillsInfo.append("- ").append(name).append(" ").append(mandatory).append("\n");
+                }
+
+                if (!hasSkills) skillsInfo.append("No special talent is mentioned for this post.");
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Post details: " + selected.getTitle());
+                alert.setHeaderText(selected.getCompanyName() + " - Skill Requirements");
+                alert.setContentText(skillsInfo.toString());
+                alert.showAndWait();
+
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 
     @FXML

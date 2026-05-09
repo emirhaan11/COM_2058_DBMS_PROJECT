@@ -5,13 +5,14 @@ public class Application {
     private String seekerName;
     private String jobTitle;
     private String status;
+    private int jobId;
 
-
-    public Application(int applicationId, String seekerName, String jobTitle, String status) {
+    public Application(int applicationId, String seekerName, String jobTitle, String status, int jobId) {
         this.applicationId = applicationId;
         this.seekerName = seekerName;
         this.jobTitle = jobTitle;
         this.status = status;
+        this.jobId = jobId;
     }
 
 
@@ -41,5 +42,12 @@ public class Application {
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getJobId() {
+        return jobId;
+    }
+    public void setJobId(int jobId) {
+        this.jobId = jobId;
     }
 }

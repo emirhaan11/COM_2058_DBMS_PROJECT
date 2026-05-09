@@ -5,6 +5,7 @@ import dbms_project.database.UserSession;
 import dbms_project.model.Education;
 import dbms_project.model.Experience;
 import dbms_project.model.JobPosting;
+import dbms_project.model.SeekerSkill;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -31,16 +32,33 @@ public class SeekerDashboardController {
     @FXML private TableView<Education> educationTable;
     @FXML private TableColumn<Education, String> colInstitution;
     @FXML private TableColumn<Education, String> colDegree;
+    @FXML private TableColumn<Education, String> colGradYear;
+    @FXML private TextField gradYearField;
+    @FXML private TableColumn<Education, String> colDepartment;
+    @FXML private TextField deptField;
 
     // deneyim tablosu
     @FXML private TableView<Experience> experienceTable;
     @FXML private TableColumn<Experience, String> colExpCompany;
     @FXML private TableColumn<Experience, String> colRole;
+    @FXML private TableColumn<Experience, String> colStartDate;
+    @FXML private TableColumn<Experience, String> colEndDate;
+    @FXML private DatePicker startDatePicker;
+    @FXML private DatePicker endDatePicker;
 
     // iş ilanları
     @FXML private TableView<JobPosting> jobPostingTable;
     @FXML private TableColumn<JobPosting, String> colCompany;
     @FXML private TableColumn<JobPosting, String> colTitle;
+
+    // yetenek sekmesi
+    @FXML private TableView<SeekerSkill> skillTable;
+    @FXML private TableColumn<SeekerSkill, String> colSkillName;
+    @FXML private TableColumn<SeekerSkill, String> colProficiency;
+    @FXML private TextField skillNameField;
+    @FXML private ComboBox<String> proficiencyCombo;
+
+
 
     private final int userId = UserSession.getUserId();
 
@@ -49,17 +67,27 @@ public class SeekerDashboardController {
         // Sütunları modellerin değişkenleri ile eşitleme
         colInstitution.setCellValueFactory(new PropertyValueFactory<>("institution"));
         colDegree.setCellValueFactory(new PropertyValueFactory<>("degree"));
+        colGradYear.setCellValueFactory(new PropertyValueFactory<>("graduationYear"));
 
         colExpCompany.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         colRole.setCellValueFactory(new PropertyValueFactory<>("role"));
+        colStartDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        colEndDate.setCellValueFactory(new PropertyValueFactory<>("endDate"));
 
         colCompany.setCellValueFactory(new PropertyValueFactory<>("companyName"));
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+
+        colSkillName.setCellValueFactory(new PropertyValueFactory<>("skillName"));
+        colProficiency.setCellValueFactory(new PropertyValueFactory<>("proficiencyLevel"));
+        proficiencyCombo.getItems().addAll("Beginner", "Intermediate", "Advanced", "Expert");
+
+        colDepartment.setCellValueFactory(new PropertyValueFactory<>("department"));
 
         loadSeekerData();
         loadEducationData();
         loadExperienceData();
         loadJobPostings();
+        loadSkills();
     }
 
     // veri tabanındanm kullanıcı verilerini çekme
@@ -83,19 +111,23 @@ public class SeekerDashboardController {
     // eğitim bilgilerini çekme
     private void loadEducationData() {
         ObservableList<Education> list = FXCollections.observableArrayList();
-        String sql = "SELECT EducationID, Institution, Degree FROM Education WHERE Seeker_ID = ?";
+        String sql = "SELECT EducationID, Institution, Department, Degree, Graduation_Year FROM Education WHERE Seeker_ID = ?";
 
         try (Connection conn = JDBCConnectivity.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            ResultSet rs = pstmt.executeQuery();
+                pstmt.setInt(1, userId);
+                ResultSet rs = pstmt.executeQuery();
+
             while (rs.next()) {
                 list.add(new Education(
-                        rs.getInt("EducationID"), rs.getString("Institution"), rs.getString("Degree")
+                        rs.getInt("EducationID"),
+                        rs.getString("Institution"),
+                        rs.getString("Department"),
+                        rs.getString("Degree"),
+                        rs.getString("Graduation_Year")
                 ));
             }
-        } catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -105,7 +137,7 @@ public class SeekerDashboardController {
     // experience
     private void loadExperienceData() {
         ObservableList<Experience> list = FXCollections.observableArrayList();
-        String sql = "SELECT ExperienceID, CompanyName, Role FROM Experience WHERE Seeker_ID = ?";
+        String sql = "SELECT ExperienceID, CompanyName, Role, Start_Date, End_Date FROM Experience WHERE Seeker_ID = ?";
 
         try (Connection conn = JDBCConnectivity.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -113,13 +145,15 @@ public class SeekerDashboardController {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 list.add(new Experience(
-                        rs.getInt("ExperienceID"), rs.getString("CompanyName"), rs.getString("Role")
+                        rs.getInt("ExperienceID"),
+                        rs.getString("CompanyName"),
+                        rs.getString("Role"),
+                        rs.getString("Start_Date"),
+                        rs.getString("End_Date")
                 ));
             }
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
+        } catch (SQLException e) { e.printStackTrace(); }
+
         experienceTable.setItems(list);
     }
 
@@ -210,37 +244,68 @@ public class SeekerDashboardController {
 
     @FXML
     public void handleAddEducation() {
-        if (instField.getText().isEmpty() || degreeField.getText().isEmpty()) return;
+        if (instField.getText().isEmpty() || deptField.getText().isEmpty()) return;
 
-        String sql = "INSERT INTO Education (Seeker_ID, Institution, Degree) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Education (Seeker_ID, Institution, Department, Degree, Graduation_Year) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = JDBCConnectivity.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, userId);
-                pstmt.setString(2, instField.getText());
-                pstmt.setString(3, degreeField.getText());
-                pstmt.executeUpdate();
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, instField.getText());
+            pstmt.setString(3, deptField.getText());
+            pstmt.setString(4, degreeField.getText());
+            pstmt.setString(5, gradYearField.getText());
+            pstmt.executeUpdate();
+            loadEducationData();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
 
-                instField.clear();
-                degreeField.clear();
-                loadEducationData();
+    @FXML
+    public void handleDeleteEducation() {
+        Education selected = educationTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        String sql = "DELETE FROM Education WHERE EducationID = ?";
+        try (Connection conn = JDBCConnectivity.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, selected.getEducationId());
+            pstmt.executeUpdate();
+            loadEducationData();
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
     @FXML
     public void handleAddExperience() {
-        if (expCompField.getText().isEmpty() || expRoleField.getText().isEmpty()) return;
+        if (expCompField.getText().isEmpty() || expRoleField.getText().isEmpty() || startDatePicker.getValue() == null || endDatePicker.getValue() == null) return;
 
-        String sql = "INSERT INTO Experience (Seeker_ID, CompanyName, Role) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Experience (Seeker_ID, CompanyName, Role, Start_Date, End_Date) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = JDBCConnectivity.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, userId);
-                pstmt.setString(2, expCompField.getText());
-                pstmt.setString(3, expRoleField.getText());
-                pstmt.executeUpdate();
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, expCompField.getText());
+            pstmt.setString(3, expRoleField.getText());
+            pstmt.setString(4, startDatePicker.getValue().toString());
+            pstmt.setString(5, endDatePicker.getValue().toString());
+            pstmt.executeUpdate();
 
-                expCompField.clear();
-                expRoleField.clear();
-                loadExperienceData();
+            expCompField.clear();
+            expRoleField.clear();
+            startDatePicker.setValue(null);
+            endDatePicker.setValue(null);
+            loadExperienceData();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    public void handleDeleteExperience() {
+        Experience selected = experienceTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        String sql = "DELETE FROM Experience WHERE ExperienceID = ?";
+        try (Connection conn = JDBCConnectivity.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, selected.getExperienceId());
+            pstmt.executeUpdate();
+            loadExperienceData();
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
@@ -267,6 +332,124 @@ public class SeekerDashboardController {
                 e.printStackTrace();
             }
         }
+    }
+
+    // adayın skillerini veritabanından çekiyor
+    private void loadSkills() {
+        ObservableList<SeekerSkill> list = FXCollections.observableArrayList();
+        String sql = "SELECT s.SkillName, ss.ProficiencyLevel " +
+                "FROM SeekerSkill ss " +
+                "JOIN Skill s ON ss.SkillID = s.SkillID " +
+                "WHERE ss.Seeker_ID = ?";
+
+        try (Connection conn = JDBCConnectivity.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, userId);
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    list.add(new SeekerSkill(rs.getString("SkillName"), rs.getString("ProficiencyLevel")));
+                }
+        } catch (SQLException e) { e.printStackTrace(); }
+
+        skillTable.setItems(list);
+    }
+
+    // yetenek havuzunun yönetimi
+    @FXML
+    public void handleAddSkill(ActionEvent actionEvent) {
+        String skillName = skillNameField.getText().trim();
+        String proficiency = proficiencyCombo.getValue();
+
+        if (skillName.isEmpty() || proficiency == null) {
+            showAlert("Warning", "Please write skill and select a level.");
+            return;
+        }
+
+        Connection conn = null;
+        try {
+            conn = JDBCConnectivity.getConnection();
+            conn.setAutoCommit(false);
+
+            // yeteneğin havuzda olup olmadığını kontrol et
+            String checkSkillSql = "SELECT SkillID FROM Skill WHERE SkillName = ?";
+            PreparedStatement checkStmt = conn.prepareStatement(checkSkillSql);
+            checkStmt.setString(1, skillName);
+            ResultSet rs = checkStmt.executeQuery();
+
+            int skillId = -1;
+            if (rs.next()) {
+                // havuzda var ise id sini alıyoruz
+                skillId = rs.getInt("SkillID");
+            } else {
+                // havuzda yok ise yeni id oluştur ve veritabanına ekle
+                String insertSkillSql = "INSERT INTO Skill (SkillName) VALUES (?)";
+                PreparedStatement insertSkillStmt = conn.prepareStatement(insertSkillSql, Statement.RETURN_GENERATED_KEYS);
+                insertSkillStmt.setString(1, skillName);
+                insertSkillStmt.executeUpdate();
+
+                ResultSet generatedKeys = insertSkillStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    skillId = generatedKeys.getInt(1);
+                }
+            }
+
+            // elde ettiğimiz id yi tabloya ekleme
+            String insertSeekerSkillSql = "INSERT INTO SeekerSkill (Seeker_ID, SkillID, ProficiencyLevel) VALUES (?, ?, ?)";
+            PreparedStatement insertSsStmt = conn.prepareStatement(insertSeekerSkillSql);
+            insertSsStmt.setInt(1, userId);
+            insertSsStmt.setInt(2, skillId);
+            insertSsStmt.setString(3, proficiency);
+            insertSsStmt.executeUpdate();
+
+            conn.commit();
+            showAlert("Successful", "Skill was added your profile!");
+
+            // tabloyu güncelleme
+            skillNameField.clear();
+            proficiencyCombo.setValue(null);
+            loadSkills();
+
+        } catch (SQLException e) {
+            if (conn != null) try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            showAlert("Warning", "This skill may have already been added to your profile or there is an error.");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void handleViewJobSkills() {
+        JobPosting selected = jobPostingTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Warning", "Please select a post.");
+            return;
+        }
+
+        StringBuilder skillsInfo = new StringBuilder("Skills Wanted:\n\n");
+        String sql = "SELECT s.SkillName, js.IsMandatory FROM JobSkill js " +
+                "JOIN Skill s ON js.SkillID = s.SkillID WHERE js.JobID = ?";
+
+        try (Connection conn = JDBCConnectivity.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, selected.getJobId());
+            ResultSet rs = pstmt.executeQuery();
+
+            boolean hasSkills = false;
+            while (rs.next()) {
+                hasSkills = true;
+                String name = rs.getString("SkillName");
+                String mandatory = rs.getBoolean("IsMandatory") ? "[MANDATORY]" : "[NOT MANDATORY]";
+                skillsInfo.append("- ").append(name).append(" ").append(mandatory).append("\n");
+            }
+
+            if (!hasSkills) skillsInfo.append("No special talent is mentioned for this post.");
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Post details: " + selected.getTitle());
+            alert.setHeaderText(selected.getCompanyName() + " - Skill Requirements");
+            alert.setContentText(skillsInfo.toString());
+            alert.showAndWait();
+
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 
     @FXML
