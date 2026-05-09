@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane prefHeight="400" prefWidth="800" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dbms_project.controller.SeekerDashboardController">
+<TabPane prefHeight="650" prefWidth="1000" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dbms_project.controller.SeekerDashboardController">
 
     <Tab text="Profil &amp; CV" closable="false">
         <ScrollPane fitToWidth="true">

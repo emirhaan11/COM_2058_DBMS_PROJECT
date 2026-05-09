@@ -4,8 +4,8 @@
 
 <TabPane xmlns="http://javafx.com/fxml" xmlns:fx="http://javafx.com/fxml/1"
          fx:controller="dbms_project.controller.EmployerDashboardController"
-         prefWidth="900" prefHeight="450"
-        >
+         prefWidth="1000" prefHeight="650"
+         stylesheets="@style.css">
 
     <Tab text="Publish New Post" closable="false">
         <VBox spacing="10" style="-fx-padding: 20;">

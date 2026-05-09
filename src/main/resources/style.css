@@ -1,92 +1,122 @@
-/* JOBJOB.NET Modern Premium Theme
-    Modern Renk Paleti: Mor (#4834d4), Açık Gri (#f1f2f6), Gradient Arka Plan
-*/
-
-/* 1. Ana Arka Plan ve Yazı Tipi */
+/* --- GENEL ARKA PLAN VE FONTLAR --- */
 .root {
-    -fx-background-color: linear-gradient(to bottom right, #667eea, #764ba2);
-    -fx-font-family: 'Segoe UI Semibold', 'Roboto', sans-serif;
-}
-
-/* 2. Login Kartı (Glassmorphism esintili) */
-.login-container {
-    -fx-background-color: rgba(255, 255, 255, 0.95); /* Yarı saydam beyaz */
-    -fx-background-radius: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 25, 0, 0, 15);
-}
-
-/* 3. Başlık Stili */
-.header-label {
-    -fx-font-size: 32px;
-    -fx-text-fill: #4834d4;
-    -fx-font-weight: 900;
-}
-
-/* 4. Giriş Alanları (TextField & PasswordField) */
-.input-field {
-    -fx-background-color: #f1f2f6;
-    -fx-background-radius: 12px;
-    -fx-border-color: transparent;
-    -fx-border-width: 2px;
-    -fx-padding: 14px 15px;
+    -fx-background-color: #F4F4F4;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     -fx-font-size: 14px;
-    -fx-text-fill: #2f3542;
-    -fx-prompt-text-fill: #a4b0be;
 }
 
-/* Tıklandığında parlayan efekt */
-.input-field:focused {
-    -fx-background-color: white;
-    -fx-border-color: #667eea;
-    -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.15), 10, 0, 0, 0);
+/* --- YAZI ALANLARI (TextField & PasswordField & ComboBox) --- */
+.text-field, .password-field, .combo-box, .text-area {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 12px;
+    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.05), 2, 0, 0, 1);
+}
+.text-field:focused, .password-field:focused, .combo-box:focused, .text-area:focused {
+    -fx-border-color: #2196F3;
+    -fx-border-width: 2px;
+    -fx-background-insets: 0;
 }
 
-/* 5. Ana Buton (Giriş Yap) */
-.login-button {
-    -fx-background-color: linear-gradient(to right, #4834d4, #686de0);
-    -fx-background-radius: 12px;
-    -fx-text-fill: white;
-    -fx-font-size: 16px;
+/* --- BUTONLAR --- */
+.button {
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 18px;
     -fx-font-weight: bold;
     -fx-cursor: hand;
-    -fx-padding: 12 30;
-    -fx-effect: dropshadow(gaussian, rgba(72,52,212,0.3), 12, 0, 0, 8);
+    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.1), 3, 0, 0, 2);
+    -fx-transition: -fx-background-color 0.3s ease;
+}
+/* Butonlara gelince hafif parlama efekti (Inline stiller CSS'i ezmesin diye parlaklık filtresi) */
+.button:hover {
+    -fx-opacity: 0.85;
+}
+.button:pressed {
+    -fx-translate-y: 2px; /* Tıklanınca aşağı çökme hissi */
+    -fx-effect: none;
 }
 
-.login-button:hover {
-    -fx-background-color: #4834d4;
-    -fx-translate-y: -2px; /* Hafif yükselme efekti */
-}
-
-.login-button:pressed {
-    -fx-translate-y: 1px;
-}
-
-/* 6. İkincil Buton (Kayıt Ol) */
-.register-button {
+/* --- TABLOLAR (TableView) --- */
+.table-view {
     -fx-background-color: transparent;
-    -fx-text-fill: #4834d4;
-    -fx-border-color: #4834d4;
-    -fx-border-radius: 12px;
-    -fx-border-width: 1.5px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+.table-view .column-header-background {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px 8px 0 0;
+}
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 40px;
+}
+.table-view .column-header .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #555555;
+}
+.table-row-cell {
+    -fx-cell-size: 40px;
+    -fx-border-color: transparent transparent #f0f0f0 transparent;
+    -fx-border-width: 1px;
+}
+.table-row-cell:odd {
+    -fx-background-color: #fafbfc;
+}
+.table-row-cell:even {
+    -fx-background-color: #ffffff;
+}
+.table-row-cell:selected {
+    -fx-background-color: #e3f2fd; /* Seçilince modern açık mavi */
+    -fx-text-fill: #000000;
+}
+
+/* --- SEKMELER (TabPane) --- */
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+.tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-padding: 10px 20px;
     -fx-cursor: hand;
-    -fx-padding: 10 25;
+}
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #777777;
     -fx-font-weight: bold;
 }
-
-.register-button:hover {
-    -fx-background-color: rgba(72,52,212,0.08);
+.tab-pane .tab:selected {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #2196F3 transparent; /* Sadece altı mavi çizgili */
+    -fx-border-width: 3px;
+}
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #2196F3;
 }
 
-/* 7. Diğer Elementler */
-.separator {
-    -fx-background-color: #dcdde1;
-    -fx-opacity: 0.5;
+/* --- KAYDIRMA ÇUBUKLARI (ScrollBars) --- */
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+.scroll-bar .thumb {
+    -fx-background-color: #cccccc;
+    -fx-background-radius: 10px;
+}
+.scroll-bar .thumb:hover {
+    -fx-background-color: #aaaaaa;
 }
 
-.hyperlink {
-    -fx-text-fill: #a4b0be;
-    -fx-font-size: 11px;
-    -fx-underline: false;
-    -fx-border-color: transparent;
+
+.logo-label {
+    -fx-font-family: "Impact";
+    -fx-font-size: 34px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #38bdf8;
 }
+
+.image-view {
+    -fx-effect: dropshadow(two-pass-box, rgba(0,120,255,0.45), 18, 0.3, 0, 0);
+}
+
