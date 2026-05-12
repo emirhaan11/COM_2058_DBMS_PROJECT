@@ -1,32 +1,33 @@
-JOB PORTAL APPLICATION
+**JOB PORTAL APPLICATION**
 
 This project is a desktop application that enables job sharing between job seekers and employers.
 The GUI is built with JavaFX, the database with MySQL, and backend operations are implemented in Java. 
 The purpose is to develop a database application within the scope of our mandatory course COM2058 (Database Management Systems).
 
 
-INSTALLATION
+**INSTALLATION**
 
 1. Requirements:
    - Java 17 or higher
    - MySQL 8.0 or higher
    - Maven
 
+
 2. Database Setup:
    - Open MySQL and run the SQL files in the Dump20260507 folder.
+
 
 3. Create .env file:
    - Create a .env file in the project root directory.
    - Add the following lines:
 
-   DB_URL=jdbc:mysql://localhost:3306/job_portal (you can change it with your local host IP address)
-   DB_USER=root (your database username)
-   DB_PASSWORD=your_password
-
+   DB_URL=jdbc:mysql://localhost:3306/job_portal (you can change it with your local host IP address)  
+   DB_USER=root (your database username)  
+   DB_PASSWORD=your_password  
    (Enter the password you set when installing MySQL in the DB_PASSWORD section)
 
 
-PROJECT STRUCTURE
+**PROJECT STRUCTURE**
 
 src/main/java/dbms_project/
   - controller/      : UI controllers (login, registration, dashboards)
@@ -40,9 +41,9 @@ src/main/resources/
   - Images/          : Application images
 
 
-DATABASE STRUCTURE
+**DATABASE STRUCTURE**
 
-The project uses 12 tables:
+The project uses 11 tables:
 
 1. USER 
    - Basic information of all users
@@ -90,7 +91,7 @@ The project uses 12 tables:
 
 
 
-TABLE RELATIONSHIPS
+**TABLE RELATIONSHIPS**
 
                    USER
                  /      \
@@ -106,7 +107,7 @@ TABLE RELATIONSHIPS
       |      |
       |    EXPERIENCE
       |
-   APPLICATION
+    APPLICATION
 
 
 Structure:
@@ -117,7 +118,7 @@ Structure:
 - Each skill can belong to multiple job postings and job seekers.
 
 
-USAGE
+**USAGE**
 1. Open the application
 2. Log in with your email and password on the login screen
 3. If you are not registered, click the "Register" button
@@ -127,7 +128,7 @@ USAGE
 7. Employers: Can post job listings, track applications, redirect them, and view profiles of applicants
 
 
-TECHNOLOGIES
+**TECHNOLOGIES**
 
 - Java 25
 - JavaFX 25: Desktop UI
@@ -137,8 +138,7 @@ TECHNOLOGIES
 - dotenv-java: Configuration from .env file
 - Maven: Project management
 
-
-QUESTIONS AND TROUBLESHOOTING
+**QUESTIONS AND TROUBLESHOOTING**
 
 If you experience connection problems:
 1. Check if the MySQL server is running
