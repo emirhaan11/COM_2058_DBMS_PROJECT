@@ -2,14 +2,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.*?>
-
 <?import java.net.URL?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
-<VBox alignment="CENTER" prefHeight="400.0" prefWidth="350.0" spacing="15.0"
-      style="-fx-background-color: #f4f4f9;" xmlns="http://javafx.com/javafx/17"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="dbms_project.controller.LoginController"
-      stylesheets="@style.css">
+
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="400.0" spacing="25.0"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="dbms_project.controller.LoginController">
 
     <stylesheets>
         <URL value="@style.css" />
@@ -19,26 +18,25 @@
         <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
     </padding>
 
-    <VBox alignment="CENTER" spacing="8">
+    <VBox styleClass="card" alignment="CENTER" spacing="20">
+        <VBox alignment="CENTER" spacing="5">
+            <ImageView fitWidth="120" fitHeight="120" preserveRatio="true">
+                <image>
+                    <Image url="@Images/icon.png" />
+                </image>
+            </ImageView>
+            <Label text="JOBJOB.NET" styleClass="logo-label" />
+            <Label text="Welcome back! Please login to continue." styleClass="subheader-label" />
+        </VBox>
 
-        <ImageView fitWidth="170" fitHeight="170" preserveRatio="true">
-            <image>
-                <Image url="@Images/icon.png" />
-            </image>
-        </ImageView>
+        <VBox spacing="15" prefWidth="300">
+            <TextField fx:id="emailField" promptText="E-mail Address" />
+            <PasswordField fx:id="passwordField" promptText="Password" />
 
-        <Label text="JOBJOB.NET" styleClass="logo-label" />
-
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="Login" onAction="#handleLogin" prefWidth="130" styleClass="btn-primary"/>
+                <Button text="Register" onAction="#handleRegister" prefWidth="130" styleClass="btn-success"/>
+            </HBox>
+        </VBox>
     </VBox>
-
-    <TextField fx:id="emailField" promptText="E-mail" styleClass="input-field" />
-
-    <PasswordField fx:id="passwordField" promptText="Password" styleClass="input-field" />
-
-    <HBox spacing="15" alignment="CENTER">
-        <Button text="Login" onAction="#handleLogin" prefWidth="120"
-                styleClass="login-button"/>
-        <Button text="Register" onAction="#handleRegister" prefWidth="120"
-                styleClass="register-button"/>
-    </HBox>
 </VBox>

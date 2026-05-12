@@ -4,85 +4,106 @@
 
 <TabPane xmlns="http://javafx.com/fxml" xmlns:fx="http://javafx.com/fxml/1"
          fx:controller="dbms_project.controller.EmployerDashboardController"
-         prefWidth="1000" prefHeight="650"
-         stylesheets="@style.css">
+         prefWidth="1050" prefHeight="700" stylesheets="@style.css">
 
     <Tab text="Publish New Post" closable="false">
-        <VBox spacing="10" style="-fx-padding: 20;">
-            <TextField fx:id="jobTitleField" promptText="Job Title"/>
-            <TextArea fx:id="jobDescArea" promptText="Job Definition" prefHeight="200"/>
-            <TextField fx:id="salaryField" promptText="Salary Range"/>
-            <Button text="Publish the Post" onAction="#handlePostJob" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <VBox spacing="20" style="-fx-padding: 30;">
+            <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                <Label text="Create a Job Posting" styleClass="header-label"/>
+                <Separator/>
+                <TextField fx:id="jobTitleField" promptText="Job Title (e.g. Data Scientist)"/>
+                <TextField fx:id="salaryField" promptText="Salary Range (e.g. $80k - $100k)"/>
+                <TextArea fx:id="jobDescArea" promptText="Job Definition and Responsibilities..." prefHeight="250" VBox.vgrow="ALWAYS"/>
 
-            <HBox alignment="TOP_RIGHT" style="-fx-padding: 10;">
-                <Button text="Exit" onAction="#handleLogout" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                <HBox alignment="CENTER_RIGHT" spacing="15">
+                    <Button text="Publish Post" onAction="#handlePostJob" styleClass="btn-primary"/>
+                </HBox>
+            </VBox>
+            <HBox alignment="TOP_RIGHT">
+                <Button text="Logout" onAction="#handleLogout" styleClass="btn-danger"/>
             </HBox>
         </VBox>
     </Tab>
 
     <Tab text="My Posts" closable="false">
-        <VBox spacing="10" style="-fx-padding: 10;">
+        <VBox spacing="20" style="-fx-padding: 20;">
+            <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                <Label text="Manage Your Job Listings" styleClass="header-label"/>
+                <TableView fx:id="myJobsTable" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn text="Title" fx:id="colMyTitle" />
+                        <TableColumn text="Description" fx:id="colMyDesc" />
+                        <TableColumn text="State" fx:id="colMyStatus" />
+                        <TableColumn text="Date" fx:id="colMyDate" />
+                    </columns>
+                </TableView>
 
-            <TableView fx:id="myJobsTable" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn text="Title" fx:id="colMyTitle" prefWidth="150"/>
-                    <TableColumn text="Description" fx:id="colMyDesc" prefWidth="300"/>
-                    <TableColumn text="State" fx:id="colMyStatus" prefWidth="100"/>
-                    <TableColumn text="Date" fx:id="colMyDate" prefWidth="150"/>
-                </columns>
-            </TableView>
-
-            <HBox spacing="10">
-                <Button text="Delete Selected Post" onAction="#handleDeleteJob" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
-                <Button text="Show The Skills" onAction="#handleViewJobSkills" style="-fx-background-color: #607D8B; -fx-text-fill: white;"/>
-            </HBox>
-
-            <TitledPane text="Add Skill to Selected Post" collapsible="false">
-                <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-                    <TextField fx:id="empSkillNameField" promptText="Skill Name (e.g., Java)" prefWidth="200"/>
-                    <CheckBox fx:id="mandatoryCheck" text="Mandatory Skill"/>
-                    <Button text="Add" onAction="#handleAddJobSkill" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button text="View Skills" onAction="#handleViewJobSkills" styleClass="btn-secondary"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Delete Post" onAction="#handleDeleteJob" styleClass="btn-danger"/>
                 </HBox>
-            </TitledPane>
+            </VBox>
 
+            <VBox styleClass="card" spacing="10">
+                <Label text="Add Required Skill to Selected Post" styleClass="subheader-label"/>
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <TextField fx:id="empSkillNameField" promptText="Skill Name (e.g., Python)" HBox.hgrow="ALWAYS"/>
+                    <CheckBox fx:id="mandatoryCheck" text="Mandatory Skill" style="-fx-font-size: 14px; -fx-text-fill: #4B5563;"/>
+                    <Button text="Add Skill" onAction="#handleAddJobSkill" styleClass="btn-success"/>
+                </HBox>
+            </VBox>
         </VBox>
     </Tab>
 
-    <Tab text="All Posts" closable="false">
-        <VBox spacing="10" style="-fx-padding: 10;">
-
-            <TableView fx:id="allJobsTable" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn text="Company" fx:id="colAllCompany" prefWidth="150"/>
-                    <TableColumn text="Title" fx:id="colAllTitle" prefWidth="150"/>
-                    <TableColumn text="Description" fx:id="colAllDesc" prefWidth="300"/>
-                    <TableColumn text="Salary" fx:id="colAllSalary" prefWidth="100"/>
-                </columns>
-            </TableView>
-
-            <HBox spacing="10">
-                <Button onAction="#handleViewJobSkills" text="View Job Details/Skills" style="-fx-background-color: #607D8B; -fx-text-fill: white;" />
-            </HBox>
-
+    <Tab text="All Posts (Market)" closable="false">
+        <VBox spacing="20" style="-fx-padding: 20;">
+            <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                <Label text="Global Job Market" styleClass="header-label"/>
+                <TableView fx:id="allJobsTable" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn text="Company" fx:id="colAllCompany" />
+                        <TableColumn text="Title" fx:id="colAllTitle" />
+                        <TableColumn text="Description" fx:id="colAllDesc" />
+                        <TableColumn text="Salary" fx:id="colAllSalary" />
+                    </columns>
+                </TableView>
+                <HBox alignment="CENTER_RIGHT">
+                    <Button onAction="#handleViewJobSkills" text="View Job Details" styleClass="btn-secondary" />
+                </HBox>
+            </VBox>
         </VBox>
     </Tab>
 
     <Tab text="Applications" closable="false">
-        <VBox spacing="10" style="-fx-padding: 10;">
-            <TableView fx:id="applicationTable" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn text="Candidate" fx:id="colSeekerName"/>
-                    <TableColumn text="Post" fx:id="colJobTitle"/>
-                    <TableColumn text="State" fx:id="colStatus"/>
-                </columns>
-            </TableView>
+        <VBox spacing="20" style="-fx-padding: 20;">
+            <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                <Label text="Candidate Applications" styleClass="header-label"/>
+                <TableView fx:id="applicationTable" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn text="Candidate Name" fx:id="colSeekerName" />
+                        <TableColumn text="Applied Post" fx:id="colJobTitle" />
+                        <TableColumn text="State" fx:id="colStatus" />
+                    </columns>
+                </TableView>
 
-            <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
-                <Button text="Rejected" onAction="#handleRejectApplication" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                <Button text="Accepted" onAction="#handleAcceptApplication" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                <Button text="Delete Application" onAction="#handleDeleteApplication" style="-fx-background-color: #757575; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                <Button text="View Candidate Profile" onAction="#handleViewApplicantProfile" style="-fx-background-color: #0078d4; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            </HBox>
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Button text="View Candidate Profile" onAction="#handleViewApplicantProfile" styleClass="btn-primary"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Reject" onAction="#handleRejectApplication" styleClass="btn-danger"/>
+                    <Button text="Accept" onAction="#handleAcceptApplication" styleClass="btn-success"/>
+                    <Button text="Delete Record" onAction="#handleDeleteApplication" styleClass="btn-secondary"/>
+                </HBox>
+            </VBox>
         </VBox>
     </Tab>
 </TabPane>

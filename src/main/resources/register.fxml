@@ -2,44 +2,45 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<VBox alignment="TOP_CENTER" spacing="25" prefWidth="500" prefHeight="600" style="-fx-padding: 40;"
+      xmlns="http://javafx.com/fxml" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="dbms_project.controller.RegisterController" stylesheets="@style.css">
 
-<VBox alignment="TOP_CENTER" spacing="20" style="-fx-background-color: #f4f4f9; -fx-padding: 30;"
-      xmlns="http://javafx.com/fxml"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="dbms_project.controller.RegisterController"
-      stylesheets="@style.css">
+    <VBox alignment="CENTER" spacing="10">
+        <Label text="Join JOBJOB.NET" styleClass="logo-label" style="-fx-font-size: 32px;"/>
+        <Label text="Select your account type to get started" styleClass="subheader-label"/>
+    </VBox>
 
-
-    <HBox alignment="CENTER" spacing="20">
-        <Button text="Employer" onAction="#showEmployerForm" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-        <Button text="Job Seeker" onAction="#showSeekerForm" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+    <HBox alignment="CENTER" spacing="15">
+        <Button text="I am an Employer" onAction="#showEmployerForm" styleClass="btn-primary" prefWidth="160"/>
+        <Button text="I am a Job Seeker" onAction="#showSeekerForm" styleClass="btn-success" prefWidth="160"/>
     </HBox>
 
-    <StackPane fx:id="formStackPane" prefHeight="300" prefWidth="300" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 10;">
+    <StackPane fx:id="formStackPane" prefHeight="400" prefWidth="400">
 
-        <VBox fx:id="employerForm" alignment="CENTER" spacing="10" style="-fx-padding: 20;">
-            <Label text="Employer Registration" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-            <TextField fx:id="empMail" promptText="Email" />
+        <VBox fx:id="employerForm" alignment="CENTER" spacing="15" styleClass="card" maxWidth="400">
+            <Label text="Employer Registration" styleClass="header-label"/>
+            <Separator />
+            <TextField fx:id="empMail" promptText="Email Address" />
             <TextField fx:id="empCompanyName" promptText="Company Name (e.g. Tech Corp)" />
-            <TextField fx:id="empTitle" promptText="Job Title (e.g. CEO)" />
-            <PasswordField fx:id="empPass" promptText="Password" />
-            <Button text="Register as Employer" onAction="#registerEmployer" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-            <Hyperlink text="Do you already have an account? Log In" onAction="#handleBackToLogin"
-                       style="-fx-font-size: 14px; -fx-text-fill: #2196F3;"/>
+            <TextField fx:id="empTitle" promptText="Your Job Title (e.g. CEO, HR Manager)" />
+            <PasswordField fx:id="empPass" promptText="Create Password" />
 
+            <Button text="Register as Employer" onAction="#registerEmployer" styleClass="btn-primary" prefWidth="250" style="-fx-margin-top: 10px;"/>
+            <Hyperlink text="Already have an account? Log In" onAction="#handleBackToLogin" styleClass="btn-link"/>
         </VBox>
 
-        <VBox fx:id="seekerForm" alignment="CENTER" spacing="10" style="-fx-padding: 20; -fx-background-color: white;" visible="false">
-            <Label text="Job Seeker Registration" style="-fx-font-size: 18; -fx-font-weight: bold;"/>
-            <TextField fx:id="seekMail" promptText="Email" />
+        <VBox fx:id="seekerForm" alignment="CENTER" spacing="15" styleClass="card" maxWidth="400" visible="false">
+            <Label text="Job Seeker Registration" styleClass="header-label"/>
+            <Separator />
+            <TextField fx:id="seekMail" promptText="Email Address" />
             <TextField fx:id="seekFirst" promptText="First Name" />
             <TextField fx:id="seekLast" promptText="Last Name" />
-            <PasswordField fx:id="seekPass" promptText="Password" />
-            <Button text="Register as Job Seeker" onAction="#registerSeeker" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-            <Hyperlink text="Do you already have an account? Log In" onAction="#handleBackToLogin"
-                       style="-fx-font-size: 14px; -fx-text-fill: #2196F3;"/>
+            <PasswordField fx:id="seekPass" promptText="Create Password" />
+
+            <Button text="Register as Job Seeker" onAction="#registerSeeker" styleClass="btn-success" prefWidth="250" style="-fx-margin-top: 10px;"/>
+            <Hyperlink text="Already have an account? Log In" onAction="#handleBackToLogin" styleClass="btn-link"/>
         </VBox>
     </StackPane>
-
 
 </VBox>

@@ -1,56 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane prefHeight="650"
-         prefWidth="1000"
-         stylesheets="@style.css"
-         xmlns="http://javafx.com/javafx/17.0.12"
-         xmlns:fx="http://javafx.com/fxml/1"
+<TabPane prefHeight="700" prefWidth="1050" stylesheets="@style.css"
+         xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
          fx:controller="dbms_project.controller.SeekerDashboardController">
 
     <Tab text="Profile &amp; CV" closable="false">
-        <ScrollPane fitToWidth="true">
-            <VBox spacing="15" style="-fx-padding: 20;">
-                <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Personal Information" />
-                <TextField fx:id="fnameField" promptText="Name" />
-                <TextField fx:id="lnameField" promptText="Surname" />
-                <Button onAction="#handleUploadCV" text="Load the CV File (PDF)" />
-                <Label fx:id="cvPathLabel" text="No file was selected." />
-                <Button onAction="#handleUpdateProfile" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Update Profile" />
-                <HBox alignment="TOP_RIGHT" style="-fx-padding: 10;">
-                    <Button text="Exit" onAction="#handleLogout" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+        <VBox spacing="20" style="-fx-padding: 30;">
+            <VBox styleClass="card" spacing="20" VBox.vgrow="ALWAYS">
+                <Label text="Personal Information" styleClass="header-label" />
+                <Separator/>
+                <HBox spacing="15">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="First Name" styleClass="subheader-label"/>
+                        <TextField fx:id="fnameField" promptText="First Name" />
+                    </VBox>
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="Last Name" styleClass="subheader-label"/>
+                        <TextField fx:id="lnameField" promptText="Last Name" />
+                    </VBox>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-margin-top: 10px;">
+                    <Button onAction="#handleUpdateProfile" styleClass="btn-success" text="Save Profile Changes" />
                 </HBox>
             </VBox>
-        </ScrollPane>
+
+            <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                <Label text="Resume / CV Upload" styleClass="header-label" />
+                <Separator/>
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Button onAction="#handleUploadCV" text="Upload PDF CV" styleClass="btn-primary"/>
+                    <Label fx:id="cvPathLabel" text="No file selected." style="-fx-text-fill: #6B7280; -fx-font-style: italic;"/>
+                </HBox>
+            </VBox>
+
+            <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
+                <Button text="Logout" onAction="#handleLogout" styleClass="btn-danger"/>
+            </HBox>
+        </VBox>
     </Tab>
 
     <Tab text="Education &amp; Experience" closable="false">
-        <SplitPane dividerPositions="0.5">
-            <VBox spacing="10" style="-fx-padding: 10;">
-                <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Education" />
+        <HBox spacing="20" style="-fx-padding: 20;">
+            <!-- EDUCATION SECTION -->
+            <VBox styleClass="card" spacing="15" HBox.hgrow="ALWAYS">
+                <Label text="Education History" styleClass="header-label" />
                 <TableView fx:id="educationTable" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
                     <columns>
                         <TableColumn fx:id="colInstitution" text="Institution" />
                         <TableColumn fx:id="colDepartment" text="Department" />
                         <TableColumn fx:id="colDegree" text="Degree" />
-                        <TableColumn fx:id="colGradYear" text="Grad Year" />
+                        <TableColumn fx:id="colGradYear" text="Year" />
                     </columns>
                 </TableView>
-                <HBox spacing="5">
-                    <TextField fx:id="instField" promptText="Institution" HBox.hgrow="ALWAYS"/>
-                    <TextField fx:id="deptField" promptText="Department" HBox.hgrow="ALWAYS"/>
-                    <TextField fx:id="degreeField" promptText="Degree" prefWidth="80"/>
-                    <TextField fx:id="gradYearField" promptText="Year" prefWidth="60"/>
-                    <Button text="Add" onAction="#handleAddEducation" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-                </HBox>
-                <Button text="Delete Selected Education" onAction="#handleDeleteEducation" style="-fx-background-color: #f44336; -fx-text-fill: white; maxWidth: Infinity;"/>
+
+                <VBox spacing="10">
+                    <HBox spacing="10">
+                        <TextField fx:id="instField" promptText="Institution" HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="deptField" promptText="Department" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <TextField fx:id="degreeField" promptText="Degree" HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="gradYearField" promptText="Year" HBox.hgrow="ALWAYS"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Add" onAction="#handleAddEducation" styleClass="btn-success"/>
+                    </HBox>
+                </VBox>
+                <Button text="Delete Selected" onAction="#handleDeleteEducation" styleClass="btn-danger" maxWidth="Infinity"/>
             </VBox>
 
-            <VBox spacing="10" style="-fx-padding: 10;">
-                <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Experience" />
+            <!-- EXPERIENCE SECTION -->
+            <VBox styleClass="card" spacing="15" HBox.hgrow="ALWAYS">
+                <Label text="Work Experience" styleClass="header-label" />
                 <TableView fx:id="experienceTable" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
                     <columns>
                         <TableColumn fx:id="colExpCompany" text="Company" />
                         <TableColumn fx:id="colRole" text="Role" />
@@ -58,52 +88,70 @@
                         <TableColumn fx:id="colEndDate" text="End Date" />
                     </columns>
                 </TableView>
-                <VBox spacing="5">
-                    <HBox spacing="5">
+
+                <VBox spacing="10">
+                    <HBox spacing="10">
                         <TextField fx:id="expCompField" promptText="Company Name" HBox.hgrow="ALWAYS"/>
                         <TextField fx:id="expRoleField" promptText="Role" HBox.hgrow="ALWAYS"/>
                     </HBox>
-                    <HBox spacing="5" alignment="CENTER_LEFT">
-                        <DatePicker fx:id="startDatePicker" promptText="Start Date" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                        <DatePicker fx:id="endDatePicker" promptText="End Date" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                        <Button text="Add" onAction="#handleAddExperience" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                    <HBox spacing="10">
+                        <DatePicker fx:id="startDatePicker" promptText="Start Date" HBox.hgrow="ALWAYS"/>
+                        <DatePicker fx:id="endDatePicker" promptText="End Date" HBox.hgrow="ALWAYS"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Add" onAction="#handleAddExperience" styleClass="btn-success"/>
                     </HBox>
                 </VBox>
-                <Button text="Delete Selected Experience" onAction="#handleDeleteExperience" style="-fx-background-color: #f44336; -fx-text-fill: white; maxWidth: Infinity;"/>
+                <Button text="Delete Selected" onAction="#handleDeleteExperience" styleClass="btn-danger" maxWidth="Infinity"/>
             </VBox>
-        </SplitPane>
+        </HBox>
     </Tab>
 
-    <Tab text="Job Posts" closable="false">
-        <VBox prefHeight="488.0" prefWidth="794.0" spacing="10" style="-fx-padding: 10;">
-            <TableView fx:id="jobPostingTable">
-                <columns>
-                    <TableColumn fx:id="colCompany" text="Company" prefWidth="150" />
-                    <TableColumn fx:id="colTitle" text="Post" prefWidth="150" />
-                    <TableColumn fx:id="colDescription" text="Description" prefWidth="350" />
-                </columns>
-            </TableView>
-            <Button onAction="#handleApplyJob" text="Apply to Selected Post" style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
-            <Button onAction="#handleViewJobSkills" text="View Job Details/Skills" style="-fx-background-color: #607D8B; -fx-text-fill: white;" />
+    <Tab text="Job Search" closable="false">
+        <VBox spacing="20" style="-fx-padding: 20;">
+            <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                <Label text="Available Postings" styleClass="header-label"/>
+                <TableView fx:id="jobPostingTable" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colCompany" text="Company" />
+                        <TableColumn fx:id="colTitle" text="Job Title" />
+                        <TableColumn fx:id="colDescription" text="Description" />
+                    </columns>
+                </TableView>
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Button onAction="#handleViewJobSkills" text="View Requirements" styleClass="btn-secondary" />
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button onAction="#handleSaveJob" text="Save Job" styleClass="btn-primary" />
+                    <Button onAction="#handleApplyJob" text="Apply Now" styleClass="btn-success" />
+                </HBox>
+            </VBox>
         </VBox>
     </Tab>
 
-    <Tab text="Skills" closable="false">
-        <VBox spacing="10" style="-fx-padding: 20;">
-            <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="My Skills" />
+    <Tab text="My Skills" closable="false">
+        <VBox spacing="20" style="-fx-padding: 30;">
+            <VBox styleClass="card" spacing="15" VBox.vgrow="ALWAYS">
+                <Label text="Manage Your Skillset" styleClass="header-label" />
+                <Separator/>
+                <TableView fx:id="skillTable" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colSkillName" text="Skill Name" />
+                        <TableColumn fx:id="colProficiency" text="Proficiency Level" />
+                    </columns>
+                </TableView>
 
-            <TableView fx:id="skillTable" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="colSkillName" text="Skill Name" prefWidth="250" />
-                    <TableColumn fx:id="colProficiency" text="Proficiency" prefWidth="150" />
-                </columns>
-            </TableView>
-
-            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 0;">
-                <TextField fx:id="skillNameField" promptText="Skill Name (e.g., Java, React)" prefWidth="200"/>
-                <ComboBox fx:id="proficiencyCombo" promptText="Select Level" prefWidth="150"/>
-                <Button text="Add Skill" onAction="#handleAddSkill" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-            </HBox>
+                <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-margin-top: 10px;">
+                    <TextField fx:id="skillNameField" promptText="e.g. OpenCV, React, SQL" HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="proficiencyCombo" promptText="Select Level" HBox.hgrow="ALWAYS"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Add Skill" onAction="#handleAddSkill" styleClass="btn-success"/>
+                </HBox>
+            </VBox>
         </VBox>
     </Tab>
 </TabPane>
