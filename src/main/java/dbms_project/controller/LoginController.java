@@ -37,9 +37,7 @@ public class LoginController {
             } else {
                 loadScene("/seeker_dashboard.fxml");
             }
-            // Yeni sahneyi (Scene) yükle
         } else {
-            // Kullanıcıya hata mesajı göster (Alert veya Label ile)
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("ERROR");
             alert.setContentText("Invalid email or password.");
@@ -69,7 +67,6 @@ public class LoginController {
                 }
 
             } else {
-                // Email veritabanında yok
                 System.out.println("Error: No registered user found with this email.");
                 return false;
             }

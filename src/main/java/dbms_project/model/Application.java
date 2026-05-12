@@ -6,10 +6,12 @@ public class Application {
     private String jobTitle;
     private String status;
     private int jobId;
+    private int seekerId;
 
-    public Application(int applicationId, String seekerName, String jobTitle, String status, int jobId) {
+    public Application(int applicationId, String seekerName, int seekerId, String jobTitle, String status, int jobId) {
         this.applicationId = applicationId;
         this.seekerName = seekerName;
+        this.seekerId = seekerId;
         this.jobTitle = jobTitle;
         this.status = status;
         this.jobId = jobId;
@@ -49,5 +51,12 @@ public class Application {
     }
     public void setJobId(int jobId) {
         this.jobId = jobId;
+    }
+
+    public int getSeekerId() {
+        return seekerId;
+    }
+    public void setSeekerId(int seekerId) {
+        this.seekerId = seekerId;
     }
 }

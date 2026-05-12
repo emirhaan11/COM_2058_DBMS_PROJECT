@@ -12,10 +12,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 
 public class EmployerDashboardController {
@@ -74,7 +80,7 @@ public class EmployerDashboardController {
         loadApplications();
     }
 
-    // Database'den işverenin kendi ilanlarını çekmesi
+    // CompanyID si eşlenen employerların iş ilanlarını çekiyor
     private void loadMyJobs() {
         ObservableList<JobPosting> list = FXCollections.observableArrayList();
         int companyId = getCompanyIdFromEmployer(userId);
@@ -85,18 +91,18 @@ public class EmployerDashboardController {
                 pstmt.setInt(1, companyId);
                 ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next()) {
-                String status = rs.getBoolean("IsActive") ? "Active" : "Passive";
-                list.add(new JobPosting(
-                        rs.getInt("JobID"),
-                        "",
-                        rs.getString("Title"),
-                        rs.getString("Description"),
-                        "",
-                        rs.getString("PostedDate"),
-                        status
-                ));
-            }
+                while (rs.next()) {
+                    String status = rs.getBoolean("IsActive") ? "Active" : "Passive";
+                    list.add(new JobPosting(
+                            rs.getInt("JobID"),
+                            "",
+                            rs.getString("Title"),
+                            rs.getString("Description"),
+                            "",
+                            rs.getString("PostedDate"),
+                            status
+                    ));
+                }
         } catch (SQLException e)
         {
             e.printStackTrace();
@@ -105,7 +111,7 @@ public class EmployerDashboardController {
         myJobsTable.setItems(list);
     }
 
-    // Database den aktif olan bütün ilanları gösterir
+    // JobPosting den aktif olan bütün ilanları çeker
     private void loadAllJobs() {
         ObservableList<JobPosting> list = FXCollections.observableArrayList();
         String sql = "SELECT j.JobID, c.Name as CompanyName, j.Title, j.Description, j.SalaryRange " +
@@ -132,12 +138,12 @@ public class EmployerDashboardController {
         allJobsTable.setItems(list);
     }
 
-    // İlana yapılan bütün başvurularıu getirir
+    // Application tablosundaki employerın oluşturduğu iş ilanlarını çeker
     private void loadApplications() {
         ObservableList<Application> list = FXCollections.observableArrayList();
         int companyId = getCompanyIdFromEmployer(userId);
 
-        String sql = "SELECT a.Application_ID, CONCAT(s.FirstName, ' ', s.LastName) as SeekerName, j.Title, a.Status, j.JobID " +
+        String sql = "SELECT a.Application_ID, CONCAT(s.FirstName, ' ', s.LastName) as SeekerName, a.Seeker_ID, j.Title, a.Status, j.JobID " +
                 "FROM Application a " +
                 "JOIN JobSeeker s ON a.Seeker_ID = s.User_ID " +
                 "JOIN JobPosting j ON a.JobID = j.JobID " +
@@ -152,6 +158,7 @@ public class EmployerDashboardController {
                     list.add(new Application(
                             rs.getInt("Application_ID"),
                             rs.getString("SeekerName"),
+                            rs.getInt("Seeker_ID"),
                             rs.getString("Title"),
                             rs.getString("Status"),
                             rs.getInt("JobID")
@@ -165,6 +172,7 @@ public class EmployerDashboardController {
         applicationTable.setItems(list);
     }
 
+    //  Eğer hesabı oluştururken Company ismi girilmemişse hangi şirket adına ilan oluşturulcağı bilinmediğinden hata verir
     @FXML
     protected void handlePostJob() {
         int companyId = getCompanyIdFromEmployer(userId);
@@ -199,6 +207,7 @@ public class EmployerDashboardController {
         }
     }
 
+    // Employerın kayıt olurken oluşturduğu şirketin ID sini çeker (Bir şirket için birden fazla employer olabilir)
     private int getCompanyIdFromEmployer(int userId) {
         String sql = "SELECT CompanyID FROM Company WHERE User_ID = ?";
         try (Connection conn = JDBCConnectivity.getConnection();
@@ -216,6 +225,7 @@ public class EmployerDashboardController {
         return -1;
     }
 
+    //
     @FXML
     public void handleAddJobSkill(ActionEvent actionEvent) {
         JobPosting selectedJob = myJobsTable.getSelectionModel().getSelectedItem();
@@ -235,9 +245,9 @@ public class EmployerDashboardController {
 
         try {
             conn = JDBCConnectivity.getConnection();
-            conn.setAutoCommit(false); // Transaction başlat
+            conn.setAutoCommit(false);
 
-            // yetenek havuzunu kontrol et
+            // eğer daha önce bu isimle kaydedilmiş bir yetenek varsa direkt onun SkillID sini kullanıyor eğer yoksa bir skill oluşturup yeni ID atıyor
             String checkSkillSql = "SELECT SkillID FROM Skill WHERE SkillName = ?";
             PreparedStatement checkStmt = conn.prepareStatement(checkSkillSql);
             checkStmt.setString(1, skillName);
@@ -258,7 +268,7 @@ public class EmployerDashboardController {
                 }
             }
 
-            // tabloyu doldurma
+            // İşe alım kriterlerinde olması gereken skilleri tabloya ekleme
             String insertJobSkillSql = "INSERT INTO JobSkill (JobID, SkillID, IsMandatory) VALUES (?, ?, ?)";
             PreparedStatement insertJsStmt = conn.prepareStatement(insertJobSkillSql);
             insertJsStmt.setInt(1, selectedJob.getJobId());
@@ -292,7 +302,7 @@ public class EmployerDashboardController {
         updateApplicationStatus("Rejected");
     }
 
-    // change the state of application
+    // Employerın başvuru yapanları değerlendirip iş başvurularını kabul edip reddetme
     private void updateApplicationStatus(String newStatus) {
         Application selectedApp = applicationTable.getSelectionModel().getSelectedItem();
         if (selectedApp == null) return;
@@ -382,6 +392,186 @@ public class EmployerDashboardController {
                 alert.showAndWait();
 
         } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    public void handleDeleteApplication(ActionEvent actionEvent) {
+        Application selectedApp = applicationTable.getSelectionModel().getSelectedItem();
+
+        if (selectedApp == null) {
+            showAlert("Warning", "Please select the application you want to delete.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm");
+        confirm.setHeaderText("The application of the candidate named " + selectedApp.getSeekerName() + " will be deleted.");
+        confirm.setContentText("You cannot undo this operation. Are you sure?");
+
+        if (confirm.showAndWait().get() == ButtonType.OK) {
+            String sql = "DELETE FROM Application WHERE Application_ID = ?";
+
+            try (Connection conn = JDBCConnectivity.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setInt(1, selectedApp.getApplicationId());
+                pstmt.executeUpdate();
+
+                showAlert("Successful", "The application was deleted from the system.");
+
+                loadApplications();
+
+            } catch (SQLException e) {
+                showAlert("Error", "A database error occurred while deleting the application.");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    public void handleViewApplicantProfile(ActionEvent actionEvent) {
+        Application selectedApp = applicationTable.getSelectionModel().getSelectedItem();
+        if (selectedApp == null) {
+            showAlert("Warning", "Please select the application whose profile you want to see.");
+            return;
+        }
+
+        StringBuilder profileInfo = new StringBuilder();
+        profileInfo.append("CANDIDATE: ").append(selectedApp.getSeekerName().toUpperCase()).append("\n");
+        profileInfo.append("==============================\n\n");
+
+        try (Connection conn = JDBCConnectivity.getConnection()) {
+            profileInfo.append("--- EDUCATION ---\n");
+            String eduSql = "SELECT Institution, Department, Degree, Graduation_Year FROM Education WHERE Seeker_ID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(eduSql)) {
+                pstmt.setInt(1, selectedApp.getSeekerId());
+                ResultSet rs = pstmt.executeQuery();
+                boolean hasEdu = false;
+                while (rs.next()) {
+                    hasEdu = true;
+                    profileInfo.append("• ").append(rs.getString("Institution"))
+                            .append(" | ").append(rs.getString("Department"))
+                            .append(" | Degree: ").append(rs.getString("Degree"))
+                            .append(" (").append(rs.getString("Graduation_Year")).append(")\n");
+                }
+                if (!hasEdu) profileInfo.append("No education information entered.\n");
+            }
+
+            profileInfo.append("\n--- EXPERIENCE ---\n");
+            String expSql = "SELECT CompanyName, Role, Start_Date, End_Date FROM Experience WHERE Seeker_ID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(expSql)) {
+                pstmt.setInt(1, selectedApp.getSeekerId());
+                ResultSet rs = pstmt.executeQuery();
+                boolean hasExp = false;
+                while (rs.next()) {
+                    hasExp = true;
+                    profileInfo.append("• ").append(rs.getString("CompanyName"))
+                            .append(" - ").append(rs.getString("Role"))
+                            .append(" [").append(rs.getString("Start_Date"))
+                            .append(" / ").append(rs.getString("End_Date")).append("]\n");
+                }
+                if (!hasExp) profileInfo.append("No experience information entered.\n");
+            }
+
+            profileInfo.append("\n--- SKILLS ---\n");
+            String skillSql = "SELECT s.SkillName, ss.ProficiencyLevel " +
+                    "FROM SeekerSkill ss " +
+                    "JOIN Skill s ON ss.SkillID = s.SkillID " +
+                    "WHERE ss.Seeker_ID = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(skillSql)) {
+                pstmt.setInt(1, selectedApp.getSeekerId());
+                ResultSet rs = pstmt.executeQuery();
+                boolean hasSkills = false;
+                while (rs.next()) {
+                    hasSkills = true;
+                    profileInfo.append("• ").append(rs.getString("SkillName"))
+                            .append(" (").append(rs.getString("ProficiencyLevel")).append(")\n");
+                }
+                if (!hasSkills) profileInfo.append("No skills information entered.\n");
+            }
+
+            showProfileDialog(selectedApp.getSeekerName() + " - Candidate Profile", profileInfo.toString(), selectedApp);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Warning", "An error occurred while retrieving candidate information.");
+        }
+    }
+
+    private void showProfileDialog(String title, String content, Application app) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(app.getSeekerName() + " Career Summary");
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
+        TextArea textArea = new TextArea(content);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefHeight(400);
+        textArea.setPrefWidth(500);
+
+        dialogPane.setContent(textArea);
+
+        ButtonType viewCVButton = new ButtonType("Open CV");
+        alert.getButtonTypes().add(viewCVButton);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == viewCVButton) {
+                handleViewCV(null);
+            }
+        });
+    }
+
+    @FXML
+    public void handleViewCV(ActionEvent actionEvent) {
+        Application selectedApp = applicationTable.getSelectionModel().getSelectedItem();
+
+        if (selectedApp == null) {
+            showAlert("Warning", "Please select the candidate whose CV you want to view.");
+            return;
+        }
+
+        String sql = "SELECT CVFile FROM JobSeeker WHERE User_ID = ?";
+
+        try (Connection conn = JDBCConnectivity.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, selectedApp.getSeekerId());
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                InputStream is = rs.getBinaryStream("CVFile");
+
+                if (is == null) {
+                    showAlert("Information", "This candidate has not uploaded a CV yet.");
+                    return;
+                }
+
+                File tempFile = File.createTempFile("Candidate_CV_" + selectedApp.getSeekerName().replace(" ", "_"), ".pdf");
+
+                tempFile.deleteOnExit();
+
+                try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = is.read(buffer)) != -1) {
+                        fos.write(buffer, 0, bytesRead);
+                    }
+                }
+
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(tempFile);
+                } else {
+                    showAlert("Error", "Your system does not support opening files. File path: " + tempFile.getAbsolutePath());
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "An error occurred while uploading or opening the CV file.");
+        }
     }
 
     @FXML

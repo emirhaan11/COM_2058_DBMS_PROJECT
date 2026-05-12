@@ -18,6 +18,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
 import java.io.File;
@@ -193,7 +194,7 @@ public class SeekerDashboardController {
                 pstmt.setInt(3, userId);
                 pstmt.executeUpdate();
 
-                showAlert("Başarılı", "Profiliniz başarıyla güncellendi.");
+                showAlert("Successful", "Your profile has been successfully updated.");
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
@@ -214,9 +215,9 @@ public class SeekerDashboardController {
             pstmt.setInt(2, selectedJob.getJobId());
             pstmt.executeUpdate();
 
-            showAlert("Successful", "The post was saved successfully!");
+            showAlert("Successful", "The job posting was successfully saved!");
         } catch (SQLException e) {
-            showAlert("Error", "This post may already be saved or an error occurred..");
+            showAlert("Error", "This post was likely saved or an error occurred.");
             e.printStackTrace();
         }
     }
@@ -238,7 +239,7 @@ public class SeekerDashboardController {
                 pstmt.setInt(2, selectedJob.getJobId());
                 pstmt.executeUpdate();
 
-                showAlert("Successful", "You have successfully applied for the job posting!");
+                showAlert("Successful", "You have successfully applied for the job!");
         } catch (SQLException e) {
             showAlert("Error", "You may have already applied for this job.");
             e.printStackTrace();
@@ -321,17 +322,28 @@ public class SeekerDashboardController {
         File selectedFile = fileChooser.showOpenDialog(null);
 
         if (selectedFile != null) {
-            cvPathLabel.setText(selectedFile.getName());
+            if (selectedFile.length() > 16 * 1024 * 1024) {
+                showAlert("Error", "File size is too large (Max 16MB).");
+                return;
+            }
 
             String sql = "UPDATE JobSeeker SET CVFile = ? WHERE User_ID = ?";
-            try (Connection conn = JDBCConnectivity.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setString(1, selectedFile.getAbsolutePath());
-                    pstmt.setInt(2, userId);
-                    pstmt.executeUpdate();
 
-                    showAlert("Successful", "Your CV has been successfully uploaded to the system!");
-            } catch (SQLException e) {
+            // FileInputStream kullanarak byte akışı olarak dosyalar okunuyor
+            try (Connection conn = JDBCConnectivity.getConnection();
+                 FileInputStream fis = new FileInputStream(selectedFile);
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setBinaryStream(1, fis, (int) selectedFile.length());
+                pstmt.setInt(2, userId);
+
+                pstmt.executeUpdate();
+
+                cvPathLabel.setText(selectedFile.getName() + " (Saved to database)");
+                showAlert("Successful", "Your CV has been successfully uploaded to the database!");
+
+            } catch (Exception e) {
+                showAlert("Error", "An error occurred while uploading the file.");
                 e.printStackTrace();
             }
         }

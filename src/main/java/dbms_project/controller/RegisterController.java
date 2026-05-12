@@ -90,7 +90,7 @@ public class RegisterController {
 
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-            // USER tablosuna ekle
+            // Temel bilgilerin ortak user tablosuna eklenmesi
             PreparedStatement userStmt = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS);
             userStmt.setString(1, email);
             userStmt.setString(2, hashedPassword);
@@ -102,13 +102,13 @@ public class RegisterController {
                 userId = rs.getInt(1);
             }
 
-            // EMPLOYER a ekle
+            // Employer tablosuna özel bilgileri ekleme
             PreparedStatement empStmt = conn.prepareStatement(empSql);
             empStmt.setInt(1, userId);
             empStmt.setString(2, jobTitle);
             empStmt.executeUpdate();
 
-            // COMPANY e ekle
+            // Company tablosunu ekleme
             PreparedStatement compStmt = conn.prepareStatement(compSql);
             compStmt.setString(1, companyName);
             compStmt.setInt(2, userId);
@@ -142,11 +142,11 @@ public class RegisterController {
         Connection conn = null;
         try {
             conn = JDBCConnectivity.getConnection();
-            conn.setAutoCommit(false); // Transaction başlat
+            conn.setAutoCommit(false);
 
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-            // 1. USER a ekle
+            // ortak bilgileri ekleme
             PreparedStatement userStmt = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS);
             userStmt.setString(1, email);
             userStmt.setString(2, hashedPassword);
@@ -158,7 +158,7 @@ public class RegisterController {
                 userId = rs.getInt(1);
             }
 
-            // JOBSEEKER a ekle
+            // jobseekera özel olan bilgileri ekeleme
             PreparedStatement seekerStmt = conn.prepareStatement(seekerSql);
             seekerStmt.setInt(1, userId);
             seekerStmt.setString(2, fname);
@@ -189,18 +189,13 @@ public class RegisterController {
     @FXML
     protected void handleBackToLogin(ActionEvent event) {
         try {
-            // Login ekranını yükle
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
-
-            // Mevcut pencereyi (stage) al
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-            // Yeni sahneyi yerleştir
             stage.setScene(new Scene(loader.load()));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            // Hata olursa kullanıcıya bildir
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("An error occurred while returning to the login screen.");
             alert.showAndWait();

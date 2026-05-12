@@ -3,9 +3,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane prefHeight="650" prefWidth="1000" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dbms_project.controller.SeekerDashboardController">
+<TabPane prefHeight="650"
+         prefWidth="1000"
+         stylesheets="@style.css"
+         xmlns="http://javafx.com/javafx/17.0.12"
+         xmlns:fx="http://javafx.com/fxml/1"
+         fx:controller="dbms_project.controller.SeekerDashboardController">
 
-    <Tab text="Profil &amp; CV" closable="false">
+    <Tab text="Profile &amp; CV" closable="false">
         <ScrollPane fitToWidth="true">
             <VBox spacing="15" style="-fx-padding: 20;">
                 <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Personal Information" />
@@ -69,7 +74,7 @@
         </SplitPane>
     </Tab>
 
-    <Tab text="Job Posts &amp; Saved Posts" closable="false">
+    <Tab text="Job Posts" closable="false">
         <VBox prefHeight="488.0" prefWidth="794.0" spacing="10" style="-fx-padding: 10;">
             <TableView fx:id="jobPostingTable">
                 <columns>
@@ -78,7 +83,6 @@
                     <TableColumn fx:id="colDescription" text="Description" prefWidth="350" />
                 </columns>
             </TableView>
-            <Button onAction="#handleSaveJob" text="Save Selected Post" style="-fx-background-color: #FFC107; -fx-text-fill: black;" />
             <Button onAction="#handleApplyJob" text="Apply to Selected Post" style="-fx-background-color: #2196F3; -fx-text-fill: white;" />
             <Button onAction="#handleViewJobSkills" text="View Job Details/Skills" style="-fx-background-color: #607D8B; -fx-text-fill: white;" />
         </VBox>
@@ -96,7 +100,7 @@
             </TableView>
 
             <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10 0 0 0;">
-                <TextField fx:id="skillNameField" promptText="Skill (Örn: Java, React)" prefWidth="200"/>
+                <TextField fx:id="skillNameField" promptText="Skill Name (e.g., Java, React)" prefWidth="200"/>
                 <ComboBox fx:id="proficiencyCombo" promptText="Select Level" prefWidth="150"/>
                 <Button text="Add Skill" onAction="#handleAddSkill" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
             </HBox>
