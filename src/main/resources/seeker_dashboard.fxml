@@ -123,7 +123,6 @@
                 <HBox spacing="15" alignment="CENTER_RIGHT">
                     <Button onAction="#handleViewJobSkills" text="View Requirements" styleClass="btn-secondary" />
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Button onAction="#handleSaveJob" text="Save Job" styleClass="btn-primary" />
                     <Button onAction="#handleApplyJob" text="Apply Now" styleClass="btn-success" />
                 </HBox>
             </VBox>

@@ -198,29 +198,6 @@ public class SeekerDashboardController {
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
-    @FXML
-    public void handleSaveJob(ActionEvent actionEvent) {
-        // tablodan seçili ilanı al
-        JobPosting selectedJob = jobPostingTable.getSelectionModel().getSelectedItem();
-
-        if (selectedJob == null) {
-            showAlert("Warning", "Please select a post from the list to save.");
-            return;
-        }
-
-        String sql = "INSERT INTO SavedJob (Seeker_ID, JobID, Saved_Date) VALUES (?, ?, NOW())";
-        try (Connection conn = JDBCConnectivity.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, selectedJob.getJobId());
-            pstmt.executeUpdate();
-
-            showAlert("Successful", "The job posting was successfully saved!");
-        } catch (SQLException e) {
-            showAlert("Error", "This post was likely saved or an error occurred.");
-            e.printStackTrace();
-        }
-    }
 
     @FXML
     public void handleApplyJob(ActionEvent actionEvent) {
