@@ -27,6 +27,7 @@ CREATE TABLE `education` (
   `Seeker_ID` int NOT NULL,
   `Degree` varchar(100) DEFAULT NULL,
   `Institution` varchar(150) DEFAULT NULL,
+  'Department' varchar(100) DEFAULT NULL,
   `Graduation_Year` int DEFAULT NULL,
   PRIMARY KEY (`EducationID`,`Seeker_ID`),
   KEY `Seeker_ID` (`Seeker_ID`),

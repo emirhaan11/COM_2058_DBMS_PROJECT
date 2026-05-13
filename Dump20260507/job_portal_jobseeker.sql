@@ -26,7 +26,7 @@ CREATE TABLE `jobseeker` (
   `User_ID` int NOT NULL,
   `FirstName` varchar(100) NOT NULL,
   `LastName` varchar(100) NOT NULL,
-  `CVFile` varchar(255) DEFAULT NULL,
+  `CVFile` LONGBLOB DEFAULT NULL,
   PRIMARY KEY (`User_ID`),
   CONSTRAINT `jobseeker_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `user` (`User_ID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
